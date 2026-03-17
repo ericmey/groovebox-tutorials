@@ -1,4 +1,12 @@
 .DS_Store
+node_modules
+.next
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+coverage
 docs/reference/seqtrak/SEQTRAK_App_V200_Windows.zip
 docs/reference/seqtrak/SEQTRAK_App_V200_macOS.zip
 docs/reference/seqtrak/seqtrak_os_updater_v200.zip

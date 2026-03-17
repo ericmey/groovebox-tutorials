@@ -1,0 +1,238 @@
+import type {
+  DeviceControl,
+  DevicePlate,
+  DeviceRecord,
+  DeviceRegion,
+  DeviceStep,
+} from "@/lib/types";
+
+const plates: DevicePlate[] = [
+  { id: "left-strip", x: 1.4, y: 10.4, w: 4.3, h: 72.6, radius: 10 },
+  { id: "drum-upper", x: 8.8, y: 11.8, w: 48.5, h: 34.6, radius: 16 },
+  { id: "drum-lower", x: 8.8, y: 47.3, w: 48.5, h: 18.8, radius: 10, tone: "soft" },
+  { id: "synth-upper", x: 58.8, y: 11.8, w: 23.6, h: 34.6, radius: 16 },
+  { id: "synth-lower", x: 58.8, y: 47.3, w: 23.6, h: 18.8, radius: 10, tone: "soft" },
+  { id: "sound-index", x: 83.1, y: 11.8, w: 2.5, h: 55.8, radius: 6 },
+  { id: "sound-meter", x: 86.2, y: 11.8, w: 1.7, h: 55.8, radius: 6, tone: "soft" },
+  { id: "sound-knobs", x: 88.4, y: 18.4, w: 5.6, h: 49.2, radius: 12 },
+  { id: "fx-column", x: 95.2, y: 11.8, w: 5.8, h: 28.6, radius: 10 },
+  { id: "speaker-box", x: 101.2, y: 11.8, w: 6.4, h: 22.1, radius: 8, tone: "soft" },
+  { id: "slider-box", x: 95.1, y: 41.3, w: 12.5, h: 26.8, radius: 10 },
+  { id: "right-strip", x: 110.1, y: 11.5, w: 2.8, h: 64.4, radius: 8 },
+];
+
+const regions: DeviceRegion[] = [
+  {
+    id: "left-edge",
+    label: "Left Edge",
+    description: "Utility buttons for volume, mute states, page control, and transport.",
+    x: 1.2,
+    y: 10.1,
+    w: 4.8,
+    h: 73.2,
+  },
+  {
+    id: "drum-section",
+    label: "Drum Section",
+    description: "Seven drum tracks controlled by track knobs and the drum step keys.",
+    x: 8.7,
+    y: 11.6,
+    w: 48.9,
+    h: 54.8,
+  },
+  {
+    id: "synth-section",
+    label: "Synth Section",
+    description: "Four melodic tracks, performance keys, and music-theory utility buttons.",
+    x: 58.6,
+    y: 11.6,
+    w: 24,
+    h: 54.8,
+  },
+  {
+    id: "sound-design",
+    label: "Sound Design",
+    description: "Display and four sound design knobs with paging and undo support.",
+    x: 83.1,
+    y: 11.6,
+    w: 10.6,
+    h: 56.2,
+  },
+  {
+    id: "fx-section",
+    label: "FX Section",
+    description: "Effect controls, touch sliders, and the master or single-track routing switch.",
+    x: 95,
+    y: 11.6,
+    w: 12.8,
+    h: 56.2,
+  },
+  {
+    id: "right-edge",
+    label: "Right Edge",
+    description: "I/O and project-level controls on the device edge.",
+    x: 110,
+    y: 11.2,
+    w: 3.2,
+    h: 64.8,
+  },
+];
+
+const controls: DeviceControl[] = [
+  { id: "vol-plus", label: "[VOL+]", shortLabel: "VOL+", description: "Volume up button.", regionId: "left-edge", shape: "pill", x: 2.15, y: 13.3, w: 2.55, h: 5.9 },
+  { id: "vol-minus", label: "[VOL−]", shortLabel: "VOL−", description: "Volume down button.", regionId: "left-edge", shape: "pill", x: 2.15, y: 19.9, w: 2.55, h: 5.9 },
+  { id: "delete", label: "[DELETE]", shortLabel: "DELETE", description: "Delete button.", regionId: "left-edge", shape: "pill", x: 2.15, y: 30.1, w: 2.55, h: 5.9 },
+  { id: "mute", label: "[MUTE]", shortLabel: "MUTE", description: "Mute button.", regionId: "left-edge", shape: "pill", x: 2.15, y: 36.8, w: 2.55, h: 5.9 },
+  { id: "solo", label: "[SOLO]", shortLabel: "SOLO", description: "Solo button.", regionId: "left-edge", shape: "pill", x: 2.15, y: 43.5, w: 2.55, h: 5.9 },
+  { id: "page", label: "[PAGE]", shortLabel: "PAGE", description: "Pattern page button for drum tracks.", regionId: "left-edge", shape: "pill", x: 2.15, y: 54.5, w: 2.55, h: 6.5 },
+  { id: "play", label: "[P/PLAY]", shortLabel: "PLAY", description: "Power and play or stop button.", regionId: "left-edge", shape: "pill", x: 2.15, y: 62.8, w: 2.55, h: 9.2 },
+  { id: "all", label: "[ALL] knob", shortLabel: "ALL", description: "Changes patterns for all 11 tracks simultaneously.", regionId: "drum-section", shape: "circle", x: 10.5, y: 19.2, w: 5.7, h: 11.8 },
+  { id: "track-kick", label: "Kick knob", shortLabel: "KICK", description: "Track knob for the KICK track.", regionId: "drum-section", shape: "circle", x: 19.2, y: 19.2, w: 5.7, h: 11.8 },
+  { id: "track-snare", label: "Snare knob", shortLabel: "SNARE", description: "Track knob for the SNARE track.", regionId: "drum-section", shape: "circle", x: 29.9, y: 19.2, w: 5.7, h: 11.8 },
+  { id: "track-clap", label: "Clap knob", shortLabel: "CLAP", description: "Track knob for the CLAP track.", regionId: "drum-section", shape: "circle", x: 40.6, y: 19.2, w: 5.7, h: 11.8 },
+  { id: "track-hat1", label: "Hat 1 knob", shortLabel: "HAT 1", description: "Track knob for the HAT 1 track.", regionId: "drum-section", shape: "circle", x: 10.5, y: 38.7, w: 5.7, h: 11.8 },
+  { id: "track-hat2", label: "Hat 2 knob", shortLabel: "HAT 2", description: "Track knob for the HAT 2 track.", regionId: "drum-section", shape: "circle", x: 21.1, y: 38.7, w: 5.7, h: 11.8 },
+  { id: "track-perc1", label: "Perc 1 knob", shortLabel: "PERC 1", description: "Track knob for the PERC 1 track.", regionId: "drum-section", shape: "circle", x: 31.7, y: 38.7, w: 5.7, h: 11.8 },
+  { id: "track-perc2", label: "Perc 2 knob", shortLabel: "PERC 2", description: "Track knob for the PERC 2 track.", regionId: "drum-section", shape: "circle", x: 42.3, y: 38.7, w: 5.7, h: 11.8 },
+  { id: "track-synth1", label: "Synth 1 knob", shortLabel: "SYNTH 1", description: "Track knob for SYNTH 1.", regionId: "synth-section", shape: "circle", x: 62.4, y: 18.8, w: 5.9, h: 12.2 },
+  { id: "track-synth2", label: "Synth 2 knob", shortLabel: "SYNTH 2", description: "Track knob for SYNTH 2.", regionId: "synth-section", shape: "circle", x: 72.5, y: 18.8, w: 5.9, h: 12.2 },
+  { id: "track-dx", label: "DX knob", shortLabel: "DX", description: "Track knob for DX.", regionId: "synth-section", shape: "circle", x: 62.4, y: 38.3, w: 5.9, h: 12.2 },
+  { id: "track-sampler", label: "Sampler knob", shortLabel: "SAMPLER", description: "Track knob for the sampler track.", regionId: "synth-section", shape: "circle", x: 72.5, y: 38.3, w: 5.9, h: 12.2 },
+  { id: "record", label: "Record key", shortLabel: "REC", description: "Real-time recording key.", regionId: "synth-section", shape: "rect", x: 58.95, y: 51.7, w: 3.15, h: 11.6 },
+  { id: "bar-length", label: "[BAR LENGTH]", shortLabel: "BAR LENGTH", description: "Pattern length button for synth and sampler tracks.", regionId: "synth-section", shape: "pill", x: 61.2, y: 12.1, w: 4.15, h: 2.6 },
+  { id: "octave", label: "[OCTAVE]", shortLabel: "OCT", description: "Changes synth key pitch by octaves.", regionId: "synth-section", shape: "pill", x: 66.35, y: 12.1, w: 3.5, h: 2.6 },
+  { id: "scale", label: "[SCALE]", shortLabel: "SCALE", description: "Changes the active scale.", regionId: "synth-section", shape: "pill", x: 70.55, y: 12.1, w: 3.35, h: 2.6 },
+  { id: "key", label: "[KEY]", shortLabel: "KEY", description: "Changes the active key in half steps.", regionId: "synth-section", shape: "pill", x: 74.55, y: 12.1, w: 2.9, h: 2.6 },
+  { id: "rec-sample", label: "[REC SAMPLE]", shortLabel: "REC SAMPLE", description: "Sampling button for the sampler track.", regionId: "synth-section", shape: "pill", x: 78.1, y: 12.1, w: 4.2, h: 2.6 },
+  { id: "index", label: "Index display", shortLabel: "INDEX", description: "Text display for selected parameter or mode.", regionId: "sound-design", shape: "rect", x: 83.4, y: 14.1, w: 1.8, h: 49.8 },
+  { id: "global-meter", label: "Global Meter", shortLabel: "METER", description: "LED strip showing value or status.", regionId: "sound-design", shape: "meter", x: 86.35, y: 14.1, w: 1.15, h: 49.8 },
+  { id: "undo-redo", label: "[UNDO/REDO]", shortLabel: "UNDO", description: "Undo or redo parameter changes.", regionId: "sound-design", shape: "pill", x: 88.55, y: 14.1, w: 1.95, h: 2.8 },
+  { id: "sound-1", label: "Sound Design knob 1", shortLabel: "S1", description: "Sound Design knob 1.", regionId: "sound-design", shape: "circle", x: 88.4, y: 20.2, w: 5.05, h: 10.8 },
+  { id: "sound-2", label: "Sound Design knob 2", shortLabel: "S2", description: "Sound Design knob 2.", regionId: "sound-design", shape: "circle", x: 88.4, y: 32.6, w: 5.05, h: 10.8 },
+  { id: "sound-3", label: "Sound Design knob 3", shortLabel: "S3", description: "Sound Design knob 3.", regionId: "sound-design", shape: "circle", x: 88.4, y: 45, w: 5.05, h: 10.8 },
+  { id: "sound-4", label: "Sound Design knob 4", shortLabel: "S4", description: "Sound Design knob 4.", regionId: "sound-design", shape: "circle", x: 88.4, y: 57.4, w: 5.05, h: 10.8 },
+  { id: "sound-page", label: "Sound Design Page button", shortLabel: "PAGE", description: "Pages the sound design knobs.", regionId: "sound-design", shape: "pill", x: 89.6, y: 69.8, w: 2.6, h: 2.8 },
+  { id: "clear-fx", label: "[CLEAR FX]", shortLabel: "CLEAR FX", description: "Reduces an effect to the minimum level.", regionId: "fx-section", shape: "pill", x: 95.8, y: 14.1, w: 3.95, h: 2.8 },
+  { id: "fx", label: "[FX] knob", shortLabel: "FX", description: "Changes the effect type.", regionId: "fx-section", shape: "circle", x: 95.55, y: 20.3, w: 5.2, h: 10.9 },
+  { id: "master-single", label: "[MASTER/SINGLE] switch", shortLabel: "M/S", description: "Chooses effect routing target.", regionId: "fx-section", shape: "switch", x: 96.1, y: 34.35, w: 4.2, h: 4.6 },
+  { id: "speaker", label: "Speaker", shortLabel: "SPKR", description: "Built-in speaker.", regionId: "fx-section", shape: "speaker", x: 101.35, y: 14, w: 5.85, h: 19.3 },
+  { id: "mic", label: "Microphone", shortLabel: "MIC", description: "Built-in microphone indicator region.", regionId: "fx-section", shape: "rect", x: 106.45, y: 14.35, w: 0.5, h: 0.95 },
+  { id: "fx-level", label: "[FX LEVEL] slider", shortLabel: "FX LEVEL", description: "Touch slider for effect level.", regionId: "fx-section", shape: "slider", x: 95.85, y: 43.3, w: 3.2, h: 22.7 },
+  { id: "high-pass", label: "[HIGH PASS] slider", shortLabel: "HIGH PASS", description: "Touch slider for high-pass control.", regionId: "fx-section", shape: "slider", x: 99.8, y: 43.3, w: 3.2, h: 22.7 },
+  { id: "repeater", label: "[REPEATER] slider", shortLabel: "REPEATER", description: "Touch slider for repeater control.", regionId: "fx-section", shape: "slider", x: 103.75, y: 43.3, w: 3.2, h: 22.7 },
+  { id: "fx-page", label: "FX Page button", shortLabel: "FX PAGE", description: "Pages the effect sliders.", regionId: "fx-section", shape: "pill", x: 100.55, y: 69.8, w: 1.75, h: 2.8 },
+  { id: "usb", label: "[USB]", shortLabel: "USB", description: "USB Type-C terminal.", regionId: "right-edge", shape: "port", x: 110.55, y: 15.2, w: 1.85, h: 5.4 },
+  { id: "phones", label: "[PHONES]", shortLabel: "PHONES", description: "Headphones jack.", regionId: "right-edge", shape: "port", x: 110.55, y: 25, w: 1.85, h: 5.4 },
+  { id: "audio-in", label: "[AUDIO IN]", shortLabel: "AUDIO IN", description: "Audio input jack.", regionId: "right-edge", shape: "port", x: 110.55, y: 34.8, w: 1.85, h: 5.4 },
+  { id: "midi", label: "[MIDI]", shortLabel: "MIDI", description: "MIDI terminal.", regionId: "right-edge", shape: "port", x: 110.55, y: 44.6, w: 1.85, h: 5.4 },
+  { id: "bpm-plus", label: "[BPM+]", shortLabel: "BPM+", description: "Tempo up button.", regionId: "right-edge", shape: "pill", x: 110.45, y: 56.1, w: 2, h: 3.3 },
+  { id: "bpm-minus", label: "[BPM−]", shortLabel: "BPM−", description: "Tempo down button.", regionId: "right-edge", shape: "pill", x: 110.45, y: 61.4, w: 2, h: 3.3 },
+  { id: "swing", label: "[SWING]", shortLabel: "SWING", description: "Swing button.", regionId: "right-edge", shape: "pill", x: 110.45, y: 66.7, w: 2, h: 3.3 },
+  { id: "project-up", label: "[PROJECT↑]", shortLabel: "PROJECT", description: "Project switch button.", regionId: "right-edge", shape: "pill", x: 110.45, y: 72, w: 2, h: 3.3 },
+];
+
+for (let index = 0; index < 16; index += 1) {
+  const col = index % 8;
+  const row = Math.floor(index / 8);
+  controls.push({
+    id: `drum-key-${index + 1}`,
+    label: `Drum key ${index + 1}`,
+    shortLabel: `${index + 1}`,
+    description: `Drum step key ${index + 1}.`,
+    regionId: "drum-section",
+    shape: "rect",
+    x: 10 + col * 5.88,
+    y: 52.8 + row * 6.75,
+    w: 4.4,
+    h: 4.95,
+  });
+}
+
+for (let index = 0; index < 8; index += 1) {
+  const col = index % 4;
+  const row = Math.floor(index / 4);
+  controls.push({
+    id: `synth-key-${index + 1}`,
+    label: `Synth key ${index + 1}`,
+    shortLabel: `${index + 1}`,
+    description: `Synth performance key ${index + 1}.`,
+    regionId: "synth-section",
+    shape: "rect",
+    x: 63 + col * 4.95,
+    y: 53 + row * 6.8,
+    w: 4.1,
+    h: 5.05,
+  });
+}
+
+const steps: DeviceStep[] = [
+  {
+    id: "panel-overview",
+    title: "Learn the surface before the workflow",
+    summary: "Start by orienting the learner to the main panel zones.",
+    body: "The first view should explain how SEQTRAK divides into the drum section, synth section, sound design area, FX area, and the utility controls on the left and right edges. This is the structural foundation for every later tutorial.",
+    focusRegionIds: ["left-edge", "drum-section", "synth-section", "sound-design", "fx-section", "right-edge"],
+    activeControlIds: ["all", "track-kick", "track-synth1", "sound-1", "fx", "play", "project-up"],
+    note: "This is panel literacy, not music theory. The learner should know where things live before being asked to do anything with them.",
+  },
+  {
+    id: "drum-entry",
+    title: "Tie the selected track to a row of step keys",
+    summary: "Show how beat-making connects a track knob to the drum keys.",
+    body: "A useful beginner tutorial step should highlight a drum track knob, then the exact step keys that would create a basic kick and snare foundation. This expresses the device logic directly instead of talking about abstract sequencing first.",
+    focusRegionIds: ["drum-section"],
+    activeControlIds: ["track-kick", "track-snare", "drum-key-1", "drum-key-5", "drum-key-9", "drum-key-13", "play"],
+    note: "The manual confirms that drum parts are produced by selecting a drum track and turning steps on or off with the drum keys.",
+  },
+  {
+    id: "melody-entry",
+    title: "Show the melodic path for synth and sampler tracks",
+    summary: "Explain note entry with the synth keys and scale controls.",
+    body: "When the lesson moves into melody or bass work, the visual model should shift focus to a selected synth track, the synth keys, and the BAR LENGTH, OCTAVE, SCALE, and KEY controls that shape how a learner plays.",
+    focusRegionIds: ["synth-section"],
+    activeControlIds: ["track-synth1", "synth-key-1", "synth-key-3", "synth-key-5", "octave", "scale", "key", "bar-length"],
+  },
+  {
+    id: "tone-shaping",
+    title: "Separate sound shaping from note entry",
+    summary: "Use the right side of the panel as a distinct teaching moment.",
+    body: "The user experience improves when sound design is taught after the learner already has rhythm or notes to hear. The device map should make it obvious that the sound design knobs, FX knob, routing switch, and touch sliders are a separate layer of expression.",
+    focusRegionIds: ["sound-design", "fx-section"],
+    activeControlIds: ["sound-1", "sound-2", "sound-page", "clear-fx", "fx", "master-single", "fx-level", "high-pass", "repeater", "fx-page"],
+  },
+  {
+    id: "project-control",
+    title: "Cover project and tempo controls without overwhelming the main lesson",
+    summary: "Keep system-level controls visible but distinct from music-entry controls.",
+    body: "Project switching, tempo changes, swing, and I/O should be presented as supporting controls around the edges of the instrument. This prevents early lessons from burying the core musical workflow under setup tasks.",
+    focusRegionIds: ["left-edge", "right-edge"],
+    activeControlIds: ["play", "page", "usb", "phones", "midi", "bpm-plus", "bpm-minus", "swing", "project-up"],
+  },
+];
+
+export const seqtrakDevice: DeviceRecord = {
+  slug: "seqtrak",
+  name: "Yamaha SEQTRAK",
+  tagline: "A manual-grounded control map and tutorial surface for a compact groovebox.",
+  status: "R1 anatomy demo",
+  summary:
+    "This pass focuses on the instrument surface itself: a line-drawing-style teaching aid with semantically tagged controls that can drive future tutorials without a screenshot pipeline.",
+  goals: [
+    "Represent the actual hardware layout closely enough to anchor real tutorials.",
+    "Keep every documented control targetable for highlighting, shading, and step linking.",
+    "Establish a reusable tutorial-engine pattern without turning the web UI into a device simulator.",
+  ],
+  keyPrinciples: [
+    "The panel map is drawn from the Yamaha manuals and named with official control terminology.",
+    "The rendered device is a visual teaching layer, not a browser recreation of SEQTRAK behavior.",
+    "Tutorial steps should target controls and regions semantically so future devices can reuse the same engine.",
+  ],
+  viewport: {
+    width: 1140,
+    height: 430,
+  },
+  plates,
+  regions,
+  controls,
+  steps,
+};
